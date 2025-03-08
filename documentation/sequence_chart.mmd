@@ -1,29 +1,19 @@
 sequenceDiagram
-    participant IMS
-    participant Databricks
-    participant Segmentation
-    participant GitHub
     participant Snowflake
+    participant Databricks
+    participant GitHub
     participant Streamlit
 
-    IMS->>Databricks: Grab all IMS prod premiums and claims data.
+    Snowflake->>Databricks: Grab all raw, production premiums and claims data.
     Databricks->>Databricks: Triggers a Job Run
 
-    Databricks->>Segmentation: Pre-Processing
-    Note right of Segmentation: Filter to correct business segments. \n Drop invalid records, adjust outlier records. \n Aggregate and merge.
+    Note right of Databricks: Filter to correct business segments. <br> Drop invalid records, adjust outlier records. <br> Aggregate and merge.
 
-    Databricks->>Segmentation: Enhancing Data
-    Note right of Segmentation: Identify key information in new columns. \n Create new feature columns for segmentation. \n Generate transformations (grouping, percentiles, etc.).
+    Note right of Databricks: Identify key information in new columns. <br> Create new feature columns for segmentation. <br> Generate transformations (grouping, percentiles, etc.).
 
-    Databricks->>Databricks: Job Logging
+    Note right of Databricks: Calculate on-level premium. <br> Trend losses. <br> Develop losses.
 
-    Databricks->>Segmentation: Actuarial Processing
-    Note right of Segmentation: Calculate on-level premium. \n Trend losses. \n Develop losses.
-
-    Databricks->>Databricks: Job Logging
-
-    Databricks->>Segmentation: Insight Generation
-    Note right of Segmentation: Remove duplicate/redundant segments. \n Exclude non-credible segments. \n Identify impactful segments (good & bad).
+    Note right of Databricks: Remove duplicate/redundant segments. <br> Exclude non-credible segments. <br> Identify impactful segments (good & bad).
 
     Databricks->>Databricks: Job Logging
 
@@ -34,6 +24,7 @@ sequenceDiagram
     GitHub->>GitHub: Pull Request Conditions
     GitHub->>GitHub: Check Conditions Pass
 
-    GitHub->>Streamlit: Update dashboard
+    GitHub->>Streamlit: Update Dashboard
+    Snowflake->>Streamlit: Pull Latest Gold Layer Data
     Streamlit->>Streamlit: End-User Dashboard
     Note right of Streamlit: Advanced Dashboard Logic.

@@ -1,0 +1,31 @@
+flowchart LR
+    subgraph Bronze Layer
+    direction LR
+    A[Snowflake Raw Data] --> B[Bronze Notebook]
+    B --> P1[Parquet Storage]
+    end
+
+    subgraph Silver Layer
+    direction LR
+    P1 --> C[Silver Notebook]
+    C --> D[Processed Data]
+    D --> P2[Parquet Storage]
+    end
+
+    subgraph Gold Layer
+    P2 --> E[Gold Notebook]
+    E --> F[Final Business Logic]
+    F --> G[Snowflake Append-Only Tables]
+    end
+
+    subgraph Orchestration[Orchestration]
+    direction LR
+    X[GitHub Actions] --> DB[Databricks Workflow]
+    DB -->|Trigger Bronze| B
+    DB -->|Trigger Silver| C
+    DB -->|Trigger Gold| E
+    end
+
+    B -.-> |Log Status| DB
+    C -.-> |Log Status| DB
+    E -.-> |Log Status| DB
