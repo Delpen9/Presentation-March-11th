@@ -1,0 +1,38 @@
+flowchart LR
+    %% Bronze Layer: Document Preparation
+    subgraph Bronze Layer [Document Preparation]
+    direction LR
+        A[Raw Documents] --> B[Document Preprocessing]
+        B --> P1[Vector Embeddings Creation]
+    end
+
+    %% Silver Layer: Retrieval Process
+    subgraph Silver Layer [Retrieval Process]
+    direction LR
+        Q[User Query] --> C[Query Encoder]
+        C --> D[Query Embedding]
+        D --> P2[Vector Database Search]
+        P2 --> E[Top-k Documents Retrieval]
+    end
+
+    %% Gold Layer: Augmented Generation
+    subgraph Gold Layer [Augmented Generation]
+    direction LR
+        E --> F[Context Aggregation]
+        F --> G[Prompt Construction]
+        G --> H[Language Model Generation]
+        H --> I[Generated Answer]
+    end
+
+    %% Orchestration: Flow Control and Logging
+    subgraph Orchestration [Orchestration]
+    direction LR
+        X[API Gateway] --> DB[Pipeline Controller]
+        DB -->|Trigger Document Prep| B
+        DB -->|Trigger Retrieval| C
+        DB -->|Trigger Generation| H
+    end
+
+    B -.-> |Log Status| DB
+    C -.-> |Log Status| DB
+    H -.-> |Log Status| DB
